@@ -3,14 +3,18 @@
 #include <linux/interrupt.h>
 #include <linux/delay.h>
 #include <linux/io.h>
+#define DELAY do { mdelay(1); if (++delay > 10) break; } while(0);
 
 MODULE_LICENSE("GPL");
 
 static void beep_on(void)
 {
-	int i = 0;
-    outb(255,0x61);
-	while(i < 5000){
+    long delay = 0;
+    int i = 0;
+	while(i < 300){
+        outb(255,0x61);
+    DELAY
+        outb(0,0x61);
         i++;
     }
 	
@@ -18,7 +22,7 @@ static void beep_on(void)
 
 static void beep_off(void)
 {
-	outb(255,0x61);	
+	outb(0,0x61);	
 }
 
 static int test_beep_init(void)
